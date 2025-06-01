@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Cuestionario del Clima (100 Preguntas)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff; /* sky-50 */
+            color: #075985; /* sky-800 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align top for long content */
+            min-height: 100vh;
+            padding: 1rem 0.5rem; /* Reduced horizontal padding for smaller screens */
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 1.5rem; /* p-6 */
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            width: 100%;
+            max-width: 850px; /* Increased for more content */
+            margin: 2rem auto; /* Added margin for better centering */
+        }
+        .question-text {
+            font-size: 1.1rem; /* Slightly smaller for more questions */
+            font-weight: 600;
+            margin-bottom: 1.25rem; /* 20px */
+            color: #0369a1; /* sky-700 */
+            line-height: 1.5;
+        }
+        .option-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background-color: #f0f9ff; /* sky-50 */
+            color: #075985; /* sky-800 */
+            border: 2px solid #bae6fd; /* sky-200 */
+            padding: 0.65rem 0.9rem; /* Slightly smaller padding */
+            margin-bottom: 0.65rem; /* 10px */
+            border-radius: 0.5rem; /* 8px */
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-size: 0.85rem; /* Slightly smaller font */
+            line-height: 1.4;
+        }
+        .option-button:hover:not([disabled]) {
+            background-color: #e0f2fe; /* sky-100 */
+            border-color: #7dd3fc; /* sky-300 */
+        }
+        .option-button.correct-selection {
+            background-color: #d1fae5 !important; /* green-100 */
+            border-color: #34d399 !important; /* green-400 */
+            color: #065f46 !important; /* green-800 */
+            font-weight: 600;
+        }
+        .option-button.incorrect-selection {
+            background-color: #fee2e2 !important; /* red-100 */
+            border-color: #f87171 !important; /* red-400 */
+            color: #991b1b !important; /* red-800 */
+            font-weight: 500; /* Less emphasis than correct */
+        }
+         .option-button.actual-correct {
+            background-color: #d1fae5 !important;
+            border-color: #34d399 !important;
+            color: #065f46 !important;
+            font-style: italic;
+            font-weight: 600;
+        }
+        .option-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.95;
+        }
+        .feedback-container {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* 6px */
+            font-size: 0.8rem; /* Slightly smaller */
+            line-height: 1.5;
+        }
+        .feedback-container.correct {
+            background-color: #ecfdf5; /* green-50 */
+            color: #059669; /* green-600 */
+            border-left: 4px solid #10b981; /* green-500 */
+        }
+        .feedback-container.incorrect {
+            background-color: #fff1f2; /* rose-50 */
+            color: #e11d48; /* rose-600 */
+            border-left: 4px solid #f43f5e; /* rose-500 */
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0f2fe; /* sky-100 */
+            border-radius: 0.5rem;
+            margin-bottom: 1.25rem; /* 20px */
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 8px; /* Thinner bar */
+            background-color: #0ea5e9; /* sky-500 */
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .primary-button {
+            background-color: #0ea5e9; /* sky-500 */
+            color: white;
+            padding: 0.65rem 1.25rem; /* Slightly smaller */
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+            font-size: 0.9rem;
+        }
+        .primary-button:hover:not([disabled]) {
+            background-color: #0284c7; /* sky-600 */
+        }
+        .primary-button:disabled {
+            background-color: #a5f3fc; /* cyan-200 */
+            cursor: not-allowed;
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .quiz-header h1 {
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 700;
+            color: #0369a1; /* sky-700 */
+        }
+        .quiz-header p {
+            font-size: 0.9rem; /* text-sm */
+            color: #0ea5e9; /* sky-500 */
+        }
+        #question-number {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        /* No SVG graphics or Mermaid JS were used in the creation of this HTML. All visual elements are achieved through HTML structure and Tailwind CSS. */
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="start-screen">
+            <div class="quiz-header">
+                <h1>Super Cuestionario del Clima</h1>
+                <p>100 Preguntas para Dominar el Tema</p>
+            </div>
+            <p class="text-center mb-8 text-sm sm:text-base">Este cuestionario exhaustivo pondrá a prueba tu conocimiento sobre todos los aspectos del clima. Las preguntas y opciones se mezclan cada vez para una nueva experiencia de aprendizaje. ¡Mucha suerte!</p>
+            <button id="start-button" class="primary-button w-full">Comenzar Cuestionario</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="question-number" class="text-slate-500 mb-2"></div>
+            <div id="question-text" class="question-text"></div>
+            <div id="options-container"></div>
+            <div id="feedback-container" class="feedback-container hidden">
+                <strong id="feedback-title" class="block mb-1 text-sm"></strong>
+                <p id="feedback-text" class="text-xs"></p>
+            </div>
+            <button id="next-button" class="primary-button mt-6 w-full" disabled>Siguiente Pregunta</button>
+        </div>
+
+        <div id="results-screen" class="hidden text-center">
+            <h2 class="text-xl sm:text-2xl font-bold text-sky-700 mb-4">Resultados del Cuestionario</h2>
+            <p id="score-text" class="text-lg sm:text-xl mb-2"></p>
+            <p id="percentage-text" class="text-base sm:text-lg mb-6"></p>
+            <p id="final-message" class="text-sm sm:text-base mb-8"></p>
+            <button id="restart-button" class="primary-button w-full">Intentar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // --- Sección 1: Conceptos Fundamentales (Clima vs. Tiempo, Atmósfera General) ---
+            {
+                question: "El 'clima' se define como el estado de la atmósfera en un lugar y momento específico, siendo altamente variable.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Esto describe el 'tiempo atmosférico'. El 'clima' es el estado promedio de la atmósfera en un lugar determinado, calculado sobre un período largo (generalmente 30 años o más)."
+            },
+            {
+                question: "La principal función de la atmósfera es generar energía geotérmica para el planeta.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La atmósfera tiene múltiples funciones vitales como proteger de radiaciones solares, regular la temperatura y albergar fenómenos meteorológicos, pero no genera energía geotérmica (que proviene del interior de la Tierra)."
+            },
+            {
+                question: "El Argón (Ar) es el gas más abundante en la atmósfera terrestre.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El gas más abundante es el Nitrógeno (N₂), constituyendo aproximadamente el 78% de la atmósfera. El Argón es el tercero más abundante, con cerca del 1%."
+            },
+            {
+                question: "¿Cuál de las siguientes describe mejor la diferencia fundamental entre 'tiempo' y 'clima'?",
+                type: "multiple_choice",
+                options: ["El tipo de instrumentos usados para medirlos", "La escala geográfica que abarcan", "La escala temporal que consideran", "Los gases atmosféricos que involucran"],
+                answer: "La escala temporal que consideran",
+                explanation: {
+                    "El tipo de instrumentos usados para medirlos": "Incorrecto. Aunque se usan instrumentos meteorológicos para ambos, la diferencia no radica ahí.",
+                    "La escala geográfica que abarcan": "Incorrecto. Tanto el tiempo como el clima se refieren a lugares específicos, aunque el clima puede definir regiones más amplias.",
+                    "La escala temporal que consideran": "Correcto. El 'tiempo' es a corto plazo (momentáneo, diario), mientras que el 'clima' es a largo plazo (promedios de décadas).",
+                    "Los gases atmosféricos que involucran": "Incorrecto. Ambos se refieren a las condiciones de la misma atmósfera."
+                }
+            },
+            {
+                question: "La atmósfera terrestre está compuesta únicamente por Nitrógeno y Oxígeno.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Si bien el Nitrógeno (~78%) y el Oxígeno (~21%) son los componentes mayoritarios, la atmósfera también contiene otros gases importantes como Argón, Dióxido de Carbono, vapor de agua y trazas de otros gases."
+            },
+
+            // --- Sección 2: Capas de la Atmósfera ---
+            {
+                question: "La temperatura en la Troposfera aumenta consistentemente con la altitud.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. En la Troposfera, la temperatura generalmente DISMINUYE con la altitud, a una tasa promedio de unos 6.5°C por cada 1000 metros."
+            },
+            {
+                question: "La capa de ozono (O₃), que absorbe la radiación UV dañina, se encuentra predominantemente en la Mesosfera.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La capa de ozono se encuentra predominantemente en la Estratosfera, la capa situada por encima de la Troposfera."
+            },
+            {
+                question: "¿Cuál es la capa atmosférica más cercana a la superficie terrestre?",
+                type: "multiple_choice",
+                options: ["Estratosfera", "Troposfera", "Termosfera", "Exosfera"],
+                answer: "Troposfera",
+                explanation: {
+                    "Estratosfera": "Incorrecto. La Estratosfera está por encima de la Troposfera.",
+                    "Troposfera": "Correcto. La Troposfera es la capa inferior, en contacto directo con la superficie, donde vivimos y ocurren los fenómenos meteorológicos.",
+                    "Termosfera": "Incorrecto. La Termosfera es una capa mucho más alta.",
+                    "Exosfera": "Incorrecto. La Exosfera es la capa más externa."
+                }
+            },
+            {
+                question: "Los meteoritos suelen desintegrarse al entrar en la Estratosfera debido a la alta fricción.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La mayoría de los meteoritos se desintegran en la Mesosfera, que está por encima de la Estratosfera. La fricción con las partículas de aire a gran velocidad genera el calor que los consume."
+            },
+            {
+                question: "La Ionosfera, importante para las comunicaciones por radio, es una región que se encuentra principalmente dentro de la:",
+                type: "multiple_choice",
+                options: ["Troposfera", "Estratosfera", "Mesosfera", "Termosfera"],
+                answer: "Termosfera",
+                explanation: {
+                    "Troposfera": "Incorrecto. La Troposfera es la capa más baja.",
+                    "Estratosfera": "Incorrecto. La Estratosfera contiene la capa de ozono.",
+                    "Mesosfera": "Incorrecto. La Mesosfera es donde se queman los meteoritos.",
+                    "Termosfera": "Correcto. La Ionosfera es la parte ionizada de la atmósfera superior, que se superpone en gran medida con la Termosfera, y refleja las ondas de radio."
+                }
+            },
+            {
+                question: "La Exosfera es la capa más densa de la atmósfera.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La Exosfera es la capa más externa y MENOS densa de la atmósfera, donde las partículas de gas son tan escasas que pueden escapar al espacio."
+            },
+            {
+                question: "El límite superior de la Troposfera se denomina Tropopausa.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La Tropopausa marca la transición entre la Troposfera y la Estratosfera, y su altitud varía con la latitud y la estación del año."
+            },
+
+            // --- Sección 3: Movimientos de la Tierra ---
+            {
+                question: "El movimiento de Rotación de la Tierra dura aproximadamente 365.25 días.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El movimiento de Rotación dura aproximadamente 24 horas y causa el día y la noche. El movimiento de Traslación dura unos 365.25 días."
+            },
+            {
+                question: "Las estaciones del año son una consecuencia directa del movimiento de Traslación de la Tierra y la inclinación de su eje.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La combinación de la órbita terrestre alrededor del Sol (traslación) y la inclinación de su eje de rotación (23.5°) causa que diferentes hemisferios reciban más luz solar directa en diferentes momentos del año."
+            },
+            {
+                question: "¿Cuál es la principal consecuencia del movimiento de rotación de la Tierra?",
+                type: "multiple_choice",
+                options: ["Las estaciones del año", "Los eclipses", "La sucesión del día y la noche", "Las mareas oceánicas"],
+                answer: "La sucesión del día y la noche",
+                explanation: {
+                    "Las estaciones del año": "Incorrecto. Las estaciones son causadas por la traslación y la inclinación del eje.",
+                    "Los eclipses": "Incorrecto. Los eclipses son fenómenos de alineación entre el Sol, la Tierra y la Luna.",
+                    "La sucesión del día y la noche": "Correcto. El giro de la Tierra sobre su eje expone alternativamente diferentes partes del planeta a la luz solar.",
+                    "Las mareas oceánicas": "Incorrecto. Las mareas son causadas principalmente por la atracción gravitatoria de la Luna y, en menor medida, del Sol."
+                }
+            },
+            {
+                question: "La velocidad de rotación de la Tierra es la misma en todas las latitudes.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La velocidad lineal de rotación es máxima en el ecuador (donde la circunferencia es mayor) y disminuye progresivamente hacia los polos, donde es prácticamente cero."
+            },
+            {
+                question: "El movimiento que realiza la Tierra alrededor del Sol se llama:",
+                type: "multiple_choice",
+                options: ["Rotación", "Precesión", "Traslación", "Nutación"],
+                answer: "Traslación",
+                explanation: {
+                    "Rotación": "Incorrecto. La rotación es el giro sobre su propio eje.",
+                    "Precesión": "Incorrecto. La precesión es un bamboleo lento del eje terrestre.",
+                    "Traslación": "Correcto. La traslación es el movimiento orbital alrededor del Sol.",
+                    "Nutación": "Incorrecto. La nutación es una pequeña oscilación del eje terrestre."
+                }
+            },
+
+            // --- Sección 4: Elementos del Clima y su Medición ---
+            // Temperatura
+            {
+                question: "La temperatura del aire se mide en 'octas'.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La temperatura se mide en grados (Celsius, Fahrenheit, Kelvin). Las 'octas' se usan para medir la nubosidad."
+            },
+            {
+                question: "Un termómetro de máxima y mínima registra únicamente la temperatura promedio del día.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Un termómetro de máxima y mínima registra, como su nombre indica, la temperatura más alta y la más baja alcanzadas durante un período determinado (generalmente 24 horas)."
+            },
+            // Precipitación
+            {
+                question: "¿Qué tipo de precipitación se forma cuando el aire húmedo es forzado a ascender por una cadena montañosa?",
+                type: "multiple_choice",
+                options: ["Convectiva", "Frontal", "Orográfica", "Ciclónica"],
+                answer: "Orográfica",
+                explanation: {
+                    "Convectiva": "Incorrecto. La convectiva se debe al calentamiento superficial.",
+                    "Frontal": "Incorrecto. La frontal se debe al encuentro de masas de aire.",
+                    "Orográfica": "Correcto. 'Oros' significa montaña; esta lluvia se produce por el ascenso del aire sobre relieves montañosos.",
+                    "Ciclónica": "Incorrecto. Ciclónica se refiere a sistemas de baja presión, que pueden generar lluvias frontales o convectivas."
+                }
+            },
+            {
+                question: "El granizo es una forma de precipitación líquida.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El granizo es una forma de precipitación SÓLIDA, compuesta por bolas o trozos irregulares de hielo."
+            },
+            {
+                question: "Las lluvias de convección son más comunes en regiones polares durante el invierno.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Las lluvias de convección son causadas por el calentamiento intenso de la superficie, por lo que son más comunes en regiones cálidas y húmedas, o durante el verano en latitudes medias."
+            },
+            {
+                question: "Un pluviómetro es un instrumento que mide:",
+                type: "multiple_choice",
+                options: ["La intensidad de la radiación solar", "La cantidad de lluvia caída", "La dirección de las nubes", "La evaporación del agua"],
+                answer: "La cantidad de lluvia caída",
+                explanation: {
+                    "La intensidad de la radiación solar": "Incorrecto. Esto se mide con un piranómetro o heliógrafo.",
+                    "La cantidad de lluvia caída": "Correcto. El pluviómetro recoge y mide el volumen de precipitación líquida.",
+                    "La dirección de las nubes": "Incorrecto. La dirección de las nubes se observa o se mide con un nefoscopio.",
+                    "La evaporación del agua": "Incorrecto. La evaporación se mide con un evaporímetro o tanque de evaporación."
+                }
+            },
+            {
+                question: "La 'sombra de lluvia' es un fenómeno asociado a las precipitaciones de tipo frontal.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La 'sombra de lluvia' es un fenómeno asociado a las precipitaciones OROGRÁFICAS, donde la ladera de sotavento (opuesta al viento) de una montaña recibe mucha menos lluvia."
+            },
+            // Humedad
+            {
+                question: "La humedad absoluta se expresa generalmente como un porcentaje.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La humedad absoluta es la masa de vapor de agua por unidad de volumen de aire (ej. g/m³). La que se expresa como porcentaje es la humedad RELATIVA."
+            },
+            {
+                question: "¿Qué instrumento se utiliza para medir la humedad relativa del aire?",
+                type: "multiple_choice",
+                options: ["Barómetro", "Termómetro", "Higrómetro", "Anemómetro"],
+                answer: "Higrómetro",
+                explanation: {
+                    "Barómetro": "Incorrecto. Mide la presión atmosférica.",
+                    "Termómetro": "Incorrecto. Mide la temperatura.",
+                    "Higrómetro": "Correcto. El higrómetro (o psicrómetro, un tipo específico) mide la humedad del aire.",
+                    "Anemómetro": "Incorrecto. Mide la velocidad del viento."
+                }
+            },
+            {
+                question: "El aire caliente puede contener más vapor de agua que el aire frío.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La capacidad del aire para retener vapor de agua aumenta con la temperatura. Por eso, el aire caliente puede ser más húmedo en términos absolutos."
+            },
+            // Presión Atmosférica
+            {
+                question: "La presión atmosférica se mide en grados Celsius (°C).",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La presión atmosférica se mide en unidades como Hectopascales (hPa), milibares (mb) o milímetros de mercurio (mmHg). Los grados Celsius miden la temperatura."
+            },
+            {
+                question: "Un anticiclón es un área de:",
+                type: "multiple_choice",
+                options: ["Baja presión atmosférica", "Alta presión atmosférica", "Temperatura constante", "Humedad saturada"],
+                answer: "Alta presión atmosférica",
+                explanation: {
+                    "Baja presión atmosférica": "Incorrecto. Las áreas de baja presión se llaman borrascas o ciclones.",
+                    "Alta presión atmosférica": "Correcto. Los anticiclones son sistemas de alta presión, asociados generalmente a tiempo estable y seco.",
+                    "Temperatura constante": "Incorrecto. No define directamente un anticiclón.",
+                    "Humedad saturada": "Incorrecto. La humedad puede variar, pero no es la característica definitoria."
+                }
+            },
+            {
+                question: "A mayor altitud, la presión atmosférica tiende a ser mayor.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. A mayor altitud, hay menos aire por encima ejerciendo peso, por lo que la presión atmosférica tiende a ser MENOR."
+            },
+            // Viento
+            {
+                question: "El viento siempre sopla desde zonas de baja presión hacia zonas de alta presión.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El viento sopla desde zonas de ALTA presión hacia zonas de BAJA presión, debido a la fuerza del gradiente de presión."
+            },
+            {
+                question: "La veleta es un instrumento que mide la velocidad del viento.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La veleta mide la DIRECCIÓN del viento. La velocidad se mide con un anemómetro."
+            },
+            {
+                question: "¿Qué es un anemómetro?",
+                type: "multiple_choice",
+                options: ["Un instrumento para medir la lluvia", "Un instrumento para medir la velocidad del viento", "Un instrumento para medir la radiación solar", "Un instrumento para medir la nubosidad"],
+                answer: "Un instrumento para medir la velocidad del viento",
+                explanation: {
+                    "Un instrumento para medir la lluvia": "Incorrecto. Eso es un pluviómetro.",
+                    "Un instrumento para medir la velocidad del viento": "Correcto. El anemómetro, a menudo con cazoletas giratorias, mide la velocidad o intensidad del viento.",
+                    "Un instrumento para medir la radiación solar": "Incorrecto. Eso podría ser un piranómetro.",
+                    "Un instrumento para medir la nubosidad": "Incorrecto. La nubosidad se estima visualmente o con un nefoscopio."
+                }
+            },
+            // Nubosidad
+            {
+                question: "Las nubes tipo 'Cirros' son nubes bajas y densas, asociadas a lluvias persistentes.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Los Cirros son nubes altas, delgadas y fibrosas, compuestas de cristales de hielo. Las nubes bajas y densas asociadas a lluvias persistentes suelen ser Nimbostratos o Estratos."
+            },
+            {
+                question: "Un cielo completamente cubierto de nubes se reportaría como 8/8 octas de nubosidad.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La nubosidad se mide en octavos de cielo cubierto, donde 8/8 representa un cielo totalmente cubierto."
+            },
+
+            // --- Sección 5: Balance Energético y Factores Modificadores ---
+            // Balance Térmico
+            {
+                question: "El 'albedo' terrestre se refiere a la cantidad de energía solar que la Tierra irradia de vuelta al espacio como calor.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El albedo es la fracción de la radiación solar que es REFLEJADA por una superficie (nubes, hielo, suelo) de vuelta al espacio, sin ser absorbida. La energía irradiada como calor es radiación de onda larga."
+            },
+            {
+                question: "Los gases de efecto invernadero en la atmósfera son perjudiciales en cualquier concentración.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El efecto invernadero natural, causado por concentraciones normales de gases como el vapor de agua y el CO₂, es esencial para mantener la Tierra a una temperatura habitable. El problema surge con el AUMENTO excesivo de estos gases debido a la actividad humana."
+            },
+            {
+                question: "La Tierra absorbe toda la radiación solar que le llega.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Una parte significativa de la radiación solar es reflejada de nuevo al espacio por la atmósfera (nubes, aerosoles) y la superficie terrestre (hielo, nieve, desiertos). Este fenómeno se conoce como albedo."
+            },
+            // Factores Geográficos
+            {
+                question: "A medida que nos alejamos del ecuador hacia los polos, la temperatura generalmente aumenta.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. A medida que nos alejamos del ecuador (aumenta la latitud), la incidencia de los rayos solares es más oblicua y la energía recibida por unidad de superficie es menor, por lo que la temperatura generalmente DISMINUYE."
+            },
+            {
+                question: "Las corrientes marinas frías tienden a aumentar la temperatura y la humedad de las costas que bañan.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Las corrientes marinas frías tienden a ENFRIAR el aire sobre ellas y a reducir la evaporación, lo que resulta en climas costeros más fríos y SECOS de lo que correspondería por su latitud."
+            },
+            {
+                question: "¿Cuál de los siguientes factores geográficos NO influye directamente en la modificación del clima de una región?",
+                type: "multiple_choice",
+                options: ["La altitud del terreno", "La longitud geográfica", "La distancia al mar", "La presencia de cadenas montañosas"],
+                answer: "La longitud geográfica",
+                explanation: {
+                    "La altitud del terreno": "Incorrecto. La altitud afecta significativamente la temperatura y la presión.",
+                    "La longitud geográfica": "Correcto. La longitud (posición este-oeste) por sí misma no es un factor climático primario como la latitud. Su influencia es indirecta a través de la continentalidad o la posición respecto a masas de aire.",
+                    "La distancia al mar": "Incorrecto. La cercanía o lejanía al mar (continentalidad) modera las temperaturas y afecta la humedad.",
+                    "La presencia de cadenas montañosas": "Incorrecto. Las montañas actúan como barreras, afectando vientos y precipitaciones (lluvias orográficas)."
+                }
+            },
+            {
+                question: "El fenómeno de 'continentalidad' se refiere a la influencia moderadora que tienen los continentes sobre el clima de los océanos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La continentalidad se refiere al efecto que tiene la lejanía de grandes masas de agua (océanos) sobre el clima de las regiones INTERIORES de los continentes, resultando en mayores amplitudes térmicas (veranos más calurosos, inviernos más fríos)."
+            },
+            {
+                question: "Las laderas de una montaña orientadas hacia el sol (solana) tienden a ser más frías y húmedas que las laderas de umbría.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Las laderas de solana reciben más radiación solar directa, por lo que tienden a ser más CÁLIDAS y SECAS que las laderas de umbría (orientadas a la sombra), que son más frescas y suelen retener más humedad."
+            },
+
+            // --- Sección 6: Zonas Climáticas del Mundo ---
+            {
+                question: "Los climas cálidos se caracterizan por tener temperaturas medias mensuales siempre por debajo de los 10°C.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Los climas cálidos se caracterizan por tener temperaturas medias mensuales consistentemente ELEVADAS, generalmente por encima de los 18°C o 20°C."
+            },
+            {
+                question: "El clima Ecuatorial es un tipo de clima templado.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El clima Ecuatorial es un subtipo de clima CÁLIDO, caracterizado por altas temperaturas y abundantes lluvias durante todo el año."
+            },
+            {
+                question: "¿En qué zona latitudinal se encuentran predominantemente los climas templados?",
+                type: "multiple_choice",
+                options: ["En la zona intertropical (cerca del ecuador)", "En las latitudes medias (entre los trópicos y los círculos polares)", "En las regiones polares", "Únicamente en zonas de alta montaña"],
+                answer: "En las latitudes medias (entre los trópicos y los círculos polares)",
+                explanation: {
+                    "En la zona intertropical (cerca del ecuador)": "Incorrecto. Aquí predominan los climas cálidos.",
+                    "En las latitudes medias (entre los trópicos y los círculos polares)": "Correcto. Los climas templados, con sus cuatro estaciones, son característicos de estas latitudes.",
+                    "En las regiones polares": "Incorrecto. Aquí predominan los climas fríos.",
+                    "Únicamente en zonas de alta montaña": "Incorrecto. Si bien la alta montaña tiene climas fríos, los climas templados se definen por su latitud."
+                }
+            },
+            {
+                question: "Los climas polares se caracterizan por veranos largos y muy calurosos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Los climas polares se caracterizan por inviernos muy largos y extremadamente fríos, y veranos muy cortos y frescos (o fríos), con temperaturas que raramente superan los 10°C en el mes más cálido."
+            },
+            {
+                question: "Un clima Desértico Cálido se define por:",
+                type: "multiple_choice",
+                options: ["Abundantes lluvias y alta humedad todo el año", "Temperaturas suaves y cuatro estaciones bien marcadas", "Temperaturas muy elevadas y precipitaciones extremadamente escasas", "Inviernos largos y nevados con veranos cortos"],
+                answer: "Temperaturas muy elevadas y precipitaciones extremadamente escasas",
+                explanation: {
+                    "Abundantes lluvias y alta humedad todo el año": "Incorrecto. Esto describe un clima ecuatorial o tropical lluvioso.",
+                    "Temperaturas suaves y cuatro estaciones bien marcadas": "Incorrecto. Esto describe un clima templado.",
+                    "Temperaturas muy elevadas y precipitaciones extremadamente escasas": "Correcto. Esta es la característica principal de los desiertos cálidos.",
+                    "Inviernos largos y nevados con veranos cortos": "Incorrecto. Esto describe un clima frío o polar."
+                }
+            },
+            {
+                question: "El clima Mediterráneo se caracteriza por inviernos lluviosos y veranos también lluviosos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El clima Mediterráneo se caracteriza por inviernos suaves y húmedos (lluviosos) y veranos SECOS y calurosos."
+            },
+            {
+                question: "La Tundra es un tipo de vegetación característico de los climas templados oceánicos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La Tundra (vegetación de musgos, líquenes, hierbas y arbustos bajos) es característica de los climas POLARES de tundra, donde el suelo permanece congelado gran parte del año (permafrost)."
+            },
+            {
+                question: "Los climas de alta montaña siempre son idénticos al clima polar de la misma latitud.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Aunque los climas de alta montaña son fríos debido a la altitud, pueden presentar variaciones (ej. mayor radiación solar, diferencias en precipitación) respecto a los climas polares de llanura, y su vegetación se organiza en pisos altitudinales."
+            },
+
+            // --- Sección 7: Relación Clima, Sociedades y Actividades Económicas ---
+            {
+                question: "El desarrollo tecnológico ha hecho que las actividades económicas humanas sean completamente independientes de las condiciones climáticas.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Si bien la tecnología ha permitido superar muchas limitaciones (riego, invernaderos, etc.), actividades fundamentales como la agricultura, la pesca y el turismo siguen siendo altamente dependientes e influenciadas por el clima y sus variaciones."
+            },
+            {
+                question: "Según el texto del capítulo, los climas fríos y húmedos son ideales para el cultivo de cereales como el trigo y el maíz.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El texto indica que los climas TEMPLADOS son propicios para cereales, oleaginosas y fibras. Para climas fríos y húmedos, menciona el cultivo de 'frutas finas o rojas' y ganadería caprina/ovina."
+            },
+            {
+                question: "El turismo de deportes invernales es una actividad económica que prospera en:",
+                type: "multiple_choice",
+                options: ["Zonas de clima cálido y árido", "Costas tropicales con alta humedad", "Zonas de frío y relieves montañosos", "Llanuras templadas con veranos secos"],
+                answer: "Zonas de frío y relieves montañosos",
+                explanation: {
+                    "Zonas de clima cálido y árido": "Incorrecto. Aquí se desarrolla más el 'turismo aventura' según el texto.",
+                    "Costas tropicales con alta humedad": "Incorrecto. Estas son más para turismo de sol y playa.",
+                    "Zonas de frío y relieves montañosos": "Correcto. Estas condiciones son necesarias para la nieve y los deportes asociados.",
+                    "Llanuras templadas con veranos secos": "Incorrecto. No es el entorno típico para deportes invernales."
+                }
+            },
+            {
+                question: "La ganadería de camélidos es típica de regiones con climas templados y lluviosos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El texto menciona que en zonas ÁRIDAS se da el cultivo de tubérculos, legumbres, frutas secas y la cría de camélidos, adaptados a la escasez de agua."
+            },
+            {
+                question: "Las isotermas son líneas imaginarias que unen puntos de la superficie terrestre con igual:",
+                type: "multiple_choice",
+                options: ["Presión atmosférica", "Humedad relativa", "Temperatura", "Velocidad del viento"],
+                answer: "Temperatura",
+                explanation: {
+                    "Presión atmosférica": "Incorrecto. Las líneas de igual presión se llaman isobaras.",
+                    "Humedad relativa": "Incorrecto. Aunque existen isolíneas para la humedad, no son isotermas.",
+                    "Temperatura": "Correcto. Las isotermas conectan puntos con la misma temperatura.",
+                    "Velocidad del viento": "Incorrecto. Las líneas de igual velocidad del viento se llaman isotacas."
+                }
+            },
+            {
+                question: "El clima no tiene una influencia significativa en la configuración de los paisajes naturales.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El clima es uno de los factores más determinantes en la configuración de los paisajes, influyendo directamente en el tipo de vegetación, los procesos de erosión, la formación de suelos y la disponibilidad de agua."
+            },
+            {
+                question: "La elección de un destino turístico por parte de las personas nunca está influenciada por el clima del lugar de origen del turista.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El texto menciona explícitamente: 'Muchas veces las personas eligen para hacer turismo lugares de clima contrario al que viven habitualmente', lo que indica una clara influencia."
+            },
+            {
+                question: "Según el texto, ¿qué tipo de actividad económica se ha desarrollado en climas cálidos y áridos para sostener la economía regional?",
+                type: "multiple_choice",
+                options: ["Cultivo intensivo de cereales", "Ganadería vacuna a gran escala", "Turismo aventura", "Industria maderera"],
+                answer: "Turismo aventura",
+                explanation: {
+                    "Cultivo intensivo de cereales": "Incorrecto. Los climas áridos no son propicios para esto sin riego masivo.",
+                    "Ganadería vacuna a gran escala": "Incorrecto. La ganadería vacuna suele requerir más pastos y agua de lo disponible en zonas áridas.",
+                    "Turismo aventura": "Correcto. El texto lo menciona específicamente para estas regiones.",
+                    "Industria maderera": "Incorrecto. Los climas áridos no suelen tener grandes extensiones boscosas."
+                }
+            },
+            // Más preguntas variadas para llegar a 100 (continuación)
+            {
+                question: "La sensación térmica que experimentamos puede ser diferente de la temperatura real del aire debido a factores como el viento y la humedad.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. El viento puede hacer que sintamos más frío (enfriamiento por viento), y la alta humedad puede hacer que sintamos más calor (dificultad para evaporar el sudor)."
+            },
+            {
+                question: "El 'punto de rocío' es la temperatura a la cual el aire se satura de vapor de agua y comienza la condensación.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Cuando el aire se enfría hasta el punto de rocío, ya no puede contener todo el vapor de agua que tiene, y este se condensa en forma de rocío, niebla o nubes."
+            },
+            {
+                question: "Las brisas marinas y terrestres son vientos locales causados por:",
+                type: "multiple_choice",
+                options: ["La rotación de la Tierra únicamente", "La diferente capacidad de calentamiento y enfriamiento de la tierra y el agua", "La influencia de las corrientes oceánicas profundas", "La actividad volcánica submarina"],
+                answer: "La diferente capacidad de calentamiento y enfriamiento de la tierra y el agua",
+                explanation: {
+                    "La rotación de la Tierra únicamente": "Incorrecto. La rotación (efecto Coriolis) desvía los vientos, pero no es la causa primaria de estas brisas.",
+                    "La diferente capacidad de calentamiento y enfriamiento de la tierra y el agua": "Correcto. Durante el día, la tierra se calienta más rápido que el mar, creando una baja presión sobre la tierra y una brisa desde el mar (brisa marina). Por la noche, la tierra se enfría más rápido, invirtiendo el proceso (brisa terrestre).",
+                    "La influencia de las corrientes oceánicas profundas": "Incorrecto. Las corrientes profundas no causan directamente estas brisas superficiales.",
+                    "La actividad volcánica submarina": "Incorrecto. No es la causa de este fenómeno regular."
+                }
+            },
+            {
+                question: "Un climograma es un gráfico que representa únicamente las temperaturas medias mensuales de un lugar.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Un climograma típicamente representa tanto las temperaturas medias mensuales (a menudo con una línea) como las precipitaciones medias mensuales (a menudo con barras) de un lugar, permitiendo visualizar el régimen climático."
+            },
+            {
+                question: "La desertificación es un proceso que solo ocurre en regiones que naturalmente tienen climas desérticos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La desertificación es la degradación de tierras en zonas áridas, semiáridas y subhúmedas secas, resultado de diversos factores, incluido el cambio climático y las actividades humanas. Puede afectar a zonas que no eran desiertos originalmente."
+            },
+            {
+                question: "El fenómeno de 'El Niño' (ENSO) es un evento climático que afecta principalmente a las regiones polares.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El Niño - Oscilación del Sur (ENSO) es un fenómeno climático complejo que se origina en el Océano Pacífico tropical y tiene importantes consecuencias climáticas a escala global, pero su epicentro y efectos más directos no son en las regiones polares."
+            },
+            {
+                question: "La transpiración de las plantas (evapotranspiración) no contribuye significativamente a la humedad atmosférica.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La evapotranspiración (combinación de la evaporación desde el suelo y la transpiración de las plantas) es una fuente muy importante de vapor de agua para la atmósfera, especialmente sobre grandes áreas continentales con vegetación."
+            },
+            {
+                question: "Las isobaras muy juntas en un mapa meteorológico indican vientos débiles.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Isobaras muy juntas indican un gradiente de presión fuerte, lo que se traduce en vientos FUERTES. Isobaras separadas indican vientos débiles."
+            },
+            {
+                question: "La contaminación lumínica es un factor que modifica directamente el clima regional a gran escala.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Aunque la contaminación lumínica tiene efectos ecológicos y astronómicos, no es un factor directo que modifique el clima regional a gran escala como la latitud, altitud o las corrientes marinas."
+            },
+            {
+                question: "El monzón es un sistema de vientos estacionales que cambian de dirección, característico de algunas regiones tropicales y subtropicales, especialmente en Asia.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los monzones son causados por el calentamiento y enfriamiento diferencial entre la tierra y el mar a lo largo del año, provocando un cambio drástico en la dirección del viento y en los patrones de precipitación (estación seca y estación lluviosa)."
+            },
+            {
+                question: "La 'amplitud térmica' se refiere a la diferencia entre la presión atmosférica máxima y mínima registrada en un día.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La amplitud térmica (o oscilación térmica) se refiere a la diferencia entre la temperatura máxima y la temperatura mínima, ya sea diaria, mensual o anual."
+            },
+            {
+                question: "Los ciclones tropicales (huracanes, tifones) se forman sobre aguas oceánicas frías.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Los ciclones tropicales se forman sobre aguas oceánicas CÁLIDAS (generalmente por encima de 26.5°C), que proporcionan la energía y la humedad necesarias para su desarrollo."
+            },
+            {
+                question: "El efecto Coriolis, causado por la rotación de la Tierra, desvía los vientos hacia la derecha en el Hemisferio Norte y hacia la izquierda en el Hemisferio Sur.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Esta desviación aparente es una consecuencia fundamental de la rotación terrestre y afecta a todos los objetos en movimiento a gran escala, incluyendo los vientos y las corrientes oceánicas."
+            },
+            {
+                question: "Un frente ocluido se forma cuando un frente frío alcanza a un frente cálido, elevando toda la masa de aire cálido.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. En un frente ocluido, el frente frío, que se mueve más rápido, alcanza al frente cálido y lo levanta, de modo que el aire cálido queda separado de la superficie. Esto suele generar una variedad de condiciones meteorológicas complejas."
+            },
+            {
+                question: "La 'sensación de bochorno' se experimenta principalmente en condiciones de alta temperatura y baja humedad relativa.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La sensación de bochorno se experimenta en condiciones de alta temperatura y ALTA humedad relativa. La alta humedad dificulta la evaporación del sudor, que es el principal mecanismo del cuerpo para enfriarse."
+            },
+             {
+                question: "Las 'isoyetas' son líneas que en un mapa unen puntos con igual:",
+                type: "multiple_choice",
+                options: ["Temperatura media anual", "Presión atmosférica normalizada al nivel del mar", "Cantidad de precipitación acumulada en un período", "Velocidad promedio del viento"],
+                answer: "Cantidad de precipitación acumulada en un período",
+                explanation: {
+                    "Temperatura media anual": "Incorrecto. Esas son isotermas.",
+                    "Presión atmosférica normalizada al nivel del mar": "Incorrecto. Esas son isobaras.",
+                    "Cantidad de precipitación acumulada en un período": "Correcto. Las isoyetas se utilizan para representar la distribución geográfica de la precipitación.",
+                    "Velocidad promedio del viento": "Incorrecto. Esas son isotacas."
+                }
+            },
+            {
+                question: "El fenómeno conocido como 'calima' consiste en la presencia en la atmósfera de partículas muy pequeñas de polvo en suspensión, suficientemente numerosas para dar al aire un aspecto opaco.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La calima reduce la visibilidad y puede tener orígenes naturales (polvo del desierto) o antropogénicos (contaminación, incendios)."
+            },
+            {
+                question: "La 'inversión térmica' es una condición atmosférica en la que la temperatura aumenta con la altitud en una capa de la troposfera, en lugar de disminuir.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Las inversiones térmicas pueden atrapar contaminantes cerca de la superficie, empeorando la calidad del aire, y también pueden influir en la formación de nieblas."
+            },
+            {
+                question: "El principal gas responsable del agotamiento de la capa de ozono estratosférico en el siglo XX fue el dióxido de carbono.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Los principales gases responsables del agotamiento de la capa de ozono fueron los clorofluorocarbonos (CFC) y otros compuestos halogenados, utilizados en refrigerantes y aerosoles. El dióxido de carbono es el principal gas de efecto invernadero responsable del calentamiento global."
+            },
+            {
+                question: "Un 'frente estacionario' es aquel en el que dos masas de aire de diferentes características permanecen en la misma posición durante un tiempo prolongado, sin que ninguna avance significativamente sobre la otra.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los frentes estacionarios pueden producir condiciones de nubosidad y precipitación ligera o moderada de forma persistente sobre una misma zona."
+            },
+            {
+                question: "La 'escala de Beaufort' se utiliza para medir la intensidad de los terremotos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La escala de Beaufort es una escala empírica que mide la intensidad del VIENTO, basándose en el estado del mar o los efectos del viento sobre la tierra. La intensidad de los terremotos se mide con escalas como la de Richter o la de Mercalli Modificada."
+            },
+            {
+                question: "El 'permafrost' es un tipo de nube alta y delgada compuesta de cristales de hielo.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El permafrost es una capa de suelo que permanece congelada de forma permanente (al menos durante dos años consecutivos), característica de regiones polares y de alta montaña. Las nubes altas y delgadas de cristales de hielo son los Cirros."
+            },
+            {
+                question: "La 'radiación solar difusa' es aquella que alcanza la superficie terrestre después de haber sido dispersada por las moléculas del aire y las partículas en suspensión (nubes, aerosoles).",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. No toda la radiación solar llega directamente; una parte es dispersada en todas direcciones, y esta radiación difusa es la que nos permite ver en la sombra o en días nublados."
+            },
+            {
+                question: "El estudio científico del clima y sus variaciones a lo largo del tiempo se denomina 'Meteorología'.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El estudio científico del clima se denomina 'Climatología'. La 'Meteorología' es la ciencia que estudia los fenómenos atmosféricos y el tiempo a corto plazo."
+            },
+            {
+                question: "Los vientos alisios son vientos constantes que soplan desde las altas presiones subtropicales hacia las bajas presiones ecuatoriales.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los alisios son vientos superficiales muy importantes en la circulación general de la atmósfera en las regiones tropicales, soplando del noreste en el Hemisferio Norte y del sureste en el Hemisferio Sur."
+            },
+            {
+                question: "La 'evaporación' es el proceso por el cual el agua pasa del estado gaseoso (vapor) al estado líquido.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La evaporación es el proceso por el cual el agua pasa del estado LÍQUIDO al estado GASEOSO (vapor). El paso de gaseoso a líquido se llama condensación."
+            },
+            {
+                question: "Un 'mapa sinóptico' del tiempo muestra principalmente la distribución de los tipos de suelo en una región.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Un mapa sinóptico del tiempo muestra una visión general de las condiciones meteorológicas en una amplia zona en un momento específico, representando elementos como frentes, centros de alta y baja presión, isobaras, etc."
+            },
+            {
+                question: "La 'corriente en chorro' (jet stream) es un río de aire rápido y estrecho que fluye en las capas altas de la troposfera, generalmente de oeste a este.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Las corrientes en chorro son muy importantes porque influyen en la trayectoria de los sistemas meteorológicos (borrascas y anticiclones) en las latitudes medias."
+            },
+            {
+                question: "El 'Índice UV' es una medida de la cantidad de lluvia ácida que caerá en un día determinado.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El Índice UV es una medida de la intensidad de la radiación ultravioleta (UV) proveniente del Sol que alcanza la superficie terrestre, e indica el riesgo de daño por exposición solar."
+            },
+            {
+                question: "Las 'sequías meteorológicas' se definen por una escasez prolongada de precipitación en comparación con los valores normales para una región y época del año.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Esta es la definición básica de una sequía meteorológica, que puede luego derivar en sequías agrícolas, hidrológicas o socioeconómicas si persiste."
+            },
+            {
+                question: "La 'capacidad calorífica' del agua es menor que la de la tierra, lo que significa que el agua se calienta y enfría más rápidamente.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El agua tiene una capacidad calorífica MAYOR que la tierra, lo que significa que necesita más energía para cambiar su temperatura y, por lo tanto, se calienta y enfría más LENTAMENTE. Esto explica el efecto moderador de los océanos sobre el clima."
+            },
+            {
+                question: "El 'smog fotoquímico' se forma principalmente por la reacción de la luz solar con contaminantes como óxidos de nitrógeno y compuestos orgánicos volátiles, comunes en áreas urbanas con mucho tráfico.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Este tipo de smog es característico de ciudades soleadas y con alta densidad vehicular, y uno de sus componentes principales es el ozono troposférico."
+            },
+            {
+                question: "La 'paleoclimatología' es la ciencia que estudia el clima del futuro utilizando modelos computacionales avanzados.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La paleoclimatología es la ciencia que estudia los climas del PASADO de la Tierra, utilizando registros indirectos como núcleos de hielo, sedimentos oceánicos, anillos de árboles, etc. El estudio del clima futuro mediante modelos es parte de la climatología moderna."
+            },
+            {
+                question: "Un 'glaciar' es una gran masa de hielo que se forma en tierra por la acumulación, compactación y recristalización de la nieve, y que fluye lentamente debido a su propio peso.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los glaciares son importantes indicadores del cambio climático y reservorios de agua dulce."
+            },
+            {
+                question: "El 'ciclo hidrológico' describe el movimiento continuo del agua en, sobre y debajo de la superficie de la Tierra, incluyendo procesos como evaporación, condensación, precipitación y escorrentía.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Este ciclo es fundamental para la distribución del agua en el planeta y para el sistema climático."
+            },
+            {
+                question: "Las 'isohipsas' en un mapa meteorológico de altura son líneas que unen puntos de igual temperatura en una determinada superficie de presión.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Las isohipsas son líneas que unen puntos de igual ALTURA GEOPOTENCIAL en una superficie de presión constante. Las líneas de igual temperatura en altura se llamarían isotermas en esa superficie."
+            },
+            {
+                question: "Una 'ola de calor' se define como cualquier día en que la temperatura supera los 30°C.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Una ola de calor se define generalmente como un período prolongado de temperaturas excesivamente altas (y a menudo alta humedad) en relación con las condiciones esperadas para un área y época del año. Los umbrales exactos varían según la región."
+            },
+            {
+                question: "El 'forzamiento radiativo' es una medida de cómo un factor (como un gas de efecto invernadero o un cambio en la radiación solar) altera el balance energético de la Tierra.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Un forzamiento radiativo positivo tiende a calentar el sistema climático, mientras que uno negativo tiende a enfriarlo."
+            },
+            {
+                question: "La 'agricultura de secano' es aquella que depende exclusivamente del riego artificial para el suministro de agua a los cultivos.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La agricultura de secano es aquella que depende exclusivamente de la PRECIPITACIÓN natural para el suministro de agua a los cultivos, sin aporte de riego."
+            },
+            {
+                question: "Un 'microclima' es un conjunto de condiciones climáticas locales que difieren del clima general de la zona circundante, debido a factores como la topografía, la vegetación o la presencia de masas de agua.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Por ejemplo, el fondo de un valle puede tener un microclima diferente a la cima de una colina cercana, o una zona urbana puede ser más cálida que sus alrededores rurales (isla de calor urbana)."
+            },
+            {
+                question: "El 'Índice de Oscilación del Sur' (SOI) está relacionado con el fenómeno de El Niño/La Niña y se basa en las diferencias de presión atmosférica entre Tahití y Darwin (Australia).",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. El SOI es uno de los principales indicadores utilizados para monitorear el estado del sistema ENSO (El Niño - Southern Oscillation)."
+            },
+            {
+                question: "La 'deforestación' tiende a disminuir la humedad local y puede alterar los patrones de precipitación, generalmente reduciéndolos en la región afectada.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los árboles contribuyen a la humedad atmosférica a través de la evapotranspiración y su eliminación puede llevar a un clima local más seco y a una mayor escorrentía superficial."
+            },
+            {
+                question: "El 'viento geostrófico' es un viento teórico que resultaría del equilibrio exacto entre la fuerza del gradiente de presión y la fuerza de Coriolis, soplando paralelo a las isobaras.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Es una buena aproximación para los vientos en las capas altas de la atmósfera, lejos de la fricción con la superficie."
+            },
+            {
+                question: "La 'sublimación' es el proceso por el cual el agua pasa directamente del estado sólido (hielo) al estado líquido.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La sublimación es el paso directo del estado SÓLIDO (hielo) al estado GASEOSO (vapor de agua), sin pasar por el estado líquido. El paso de sólido a líquido es la fusión."
+            },
+            {
+                question: "Las 'islas de calor urbanas' son un fenómeno por el cual las áreas metropolitanas tienden a tener temperaturas más bajas que sus alrededores rurales debido a la sombra de los edificios.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Las islas de calor urbanas son un fenómeno por el cual las áreas metropolitanas tienden a tener temperaturas MÁS ALTAS que sus alrededores rurales, debido a factores como la absorción de calor por los materiales de construcción, el calor residual de actividades humanas y la menor vegetación."
+            },
+            {
+                question: "La 'Organización Meteorológica Mundial' (OMM o WMO en inglés) es la agencia especializada de las Naciones Unidas para la meteorología (tiempo y clima), la hidrología operativa y las ciencias geofísicas conexas.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La OMM juega un papel crucial en la cooperación internacional para la observación, investigación y prestación de servicios meteorológicos y climáticos."
+            },
+            {
+                question: "El 'cambio climático abrupto' se refiere a una transición del sistema climático a un estado diferente a una velocidad que es más rápida que la velocidad del cambio del forzamiento externo.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Estos cambios pueden ser inesperados y tener consecuencias significativas, ya que los sistemas naturales y humanos pueden tener dificultades para adaptarse rápidamente."
+            },
+            {
+                question: "La 'criósfera' se refiere a todas las porciones de la superficie de la Tierra donde el agua se encuentra en forma sólida, incluyendo el hielo marino, el hielo lacustre y fluvial, los casquetes polares, los glaciares, la nieve y el permafrost.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. La criósfera es un componente fundamental del sistema climático global y es muy sensible al cambio climático."
+            },
+            {
+                question: "Un 'modelo climático global' (GCM) es una representación numérica del sistema climático basada en las propiedades físicas, químicas y biológicas de sus componentes y sus interacciones y procesos de retroalimentación.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Los GCM son herramientas esenciales para estudiar el clima pasado, presente y futuro, y para proyectar los efectos del cambio climático."
+            },
+            {
+                question: "El 'Carbono Negro' (hollín) es un aerosol que, cuando se deposita sobre nieve o hielo, disminuye su albedo, haciendo que absorban más luz solar y se derritan más rápido.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. El carbono negro es un potente agente de calentamiento climático, tanto por su absorción de radiación en la atmósfera como por su efecto sobre el albedo de las superficies claras."
+            },
+            {
+                question: "La 'acidificación de los océanos' es un proceso causado por la disminución del oxígeno disuelto en el agua de mar.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La acidificación de los océanos es causada principalmente por la absorción de dióxido de carbono (CO₂) de la atmósfera por el agua de mar, lo que forma ácido carbónico y reduce el pH del océano. La disminución de oxígeno (desoxigenación) es otro problema, a menudo relacionado, pero distinto."
+            },
+            {
+                question: "La 'variabilidad climática natural' se refiere a las fluctuaciones del clima que ocurren sin influencia humana, debido a procesos internos del sistema climático o a forzamientos externos naturales (como erupciones volcánicas o variaciones solares).",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Es importante distinguir esta variabilidad natural del cambio climático inducido por el ser humano."
+            },
+            {
+                question: "El 'Protocolo de Kioto' fue un acuerdo internacional cuyo objetivo principal era eliminar el uso de combustibles fósiles para el año 2000.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. El Protocolo de Kioto (adoptado en 1997, entró en vigor en 2005) fue un acuerdo internacional que tenía por objetivo reducir las emisiones de gases de efecto invernadero de los países industrializados. No buscaba eliminar los combustibles fósiles para el 2000, sino establecer compromisos de reducción."
+            },
+            {
+                question: "El 'Acuerdo de París', adoptado en 2015, tiene como objetivo principal mantener el aumento de la temperatura media mundial muy por debajo de 2 °C con respecto a los niveles preindustriales, y proseguir los esfuerzos para limitar ese aumento a 1,5 °C.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Este es el objetivo central del Acuerdo de París, que busca una respuesta global al cambio climático."
+            },
+            {
+                question: "La 'mitigación' del cambio climático se refiere a las acciones destinadas a ajustarse a los efectos actuales y futuros del cambio climático.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. Eso describe la 'adaptación'. La 'mitigación' del cambio climático se refiere a las acciones destinadas a reducir las emisiones de gases de efecto invernadero o mejorar los sumideros de carbono, para limitar la magnitud del calentamiento futuro."
+            },
+            {
+                question: "La 'energía geotérmica' es una fuente de energía renovable que utiliza el calor del interior de la Tierra.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Se puede utilizar para generar electricidad o para calefacción y refrigeración directa."
+            },
+            {
+                question: "La 'huella de carbono' de un producto o actividad es una medida de la cantidad total de dióxido de carbono (CO₂) que libera a la atmósfera.",
+                type: "true_false",
+                answer: false,
+                explanation: "Falso. La huella de carbono es una medida de la cantidad total de GASES DE EFECTO INVERNADERO (no solo CO₂, sino también metano, óxido nitroso, etc., expresados a menudo en equivalentes de CO₂) emitidos directa o indirectamente por un individuo, organización, evento o producto."
+            },
+            {
+                question: "Los 'sumideros de carbono' son procesos o reservorios naturales o artificiales que absorben más carbono de la atmósfera del que liberan (ej. bosques en crecimiento, océanos).",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Proteger y mejorar los sumideros de carbono es una estrategia importante para la mitigación del cambio climático."
+            },
+            {
+                question: "El 'desarrollo sostenible' busca satisfacer las necesidades del presente sin comprometer la capacidad de las futuras generaciones para satisfacer sus propias necesidades.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Este concepto integra las dimensiones económica, social y ambiental del desarrollo."
+            },
+            {
+                question: "La 'resiliencia climática' es la capacidad de un sistema socioecológico para anticipar, prepararse, responder y recuperarse de los impactos del cambio climático, minimizando los daños y aprovechando las oportunidades.",
+                type: "true_false",
+                answer: true,
+                explanation: "Verdadero. Fomentar la resiliencia es clave para la adaptación al cambio climático."
+            }
+            // Total 100 preguntas
+        ];
+
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const startButton = document.getElementById('start-button');
+        const nextButton = document.getElementById('next-button');
+        const restartButton = document.getElementById('restart-button');
+
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackTitleElement = document.getElementById('feedback-title');
+        const feedbackTextElement = document.getElementById('feedback-text');
+
+        const scoreTextElement = document.getElementById('score-text');
+        const percentageTextElement = document.getElementById('percentage-text');
+        const finalMessageElement = document.getElementById('final-message');
+        const progressBar = document.getElementById('progress-bar');
+        const questionNumberElement = document.getElementById('question-number');
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswerProcessed = false;
+        let shuffledQuestions = [];
+
+        startButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', handleNextQuestion);
+        restartButton.addEventListener('click', startQuiz);
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswerProcessed = false;
+            shuffledQuestions = shuffleArray(allQuestions);
+            startScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            nextButton.disabled = true;
+            feedbackContainer.classList.add('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedAnswerProcessed = false;
+            feedbackContainer.classList.add('hidden');
+            feedbackTextElement.textContent = '';
+            feedbackTitleElement.textContent = '';
+            nextButton.disabled = true;
+
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            questionTextElement.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+
+            const progressPercentage = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            questionNumberElement.textContent = `Pregunta ${currentQuestionIndex + 1} de ${shuffledQuestions.length}`;
+
+            if (currentQuestion.type === "true_false") {
+                const trueButton = document.createElement('button');
+                trueButton.textContent = "Verdadero";
+                trueButton.classList.add('option-button');
+                trueButton.addEventListener('click', () => selectAnswer(true, trueButton));
+                optionsContainer.appendChild(trueButton);
+
+                const falseButton = document.createElement('button');
+                falseButton.textContent = "Falso";
+                falseButton.classList.add('option-button');
+                falseButton.addEventListener('click', () => selectAnswer(false, falseButton));
+                optionsContainer.appendChild(falseButton);
+            } else if (currentQuestion.type === "multiple_choice") {
+                const shuffledOptions = shuffleArray(currentQuestion.options);
+                shuffledOptions.forEach(optionText => {
+                    const button = document.createElement('button');
+                    button.textContent = optionText;
+                    button.classList.add('option-button');
+                    button.addEventListener('click', () => selectAnswer(optionText, button));
+                    optionsContainer.appendChild(button);
+                });
+            }
+        }
+
+        function selectAnswer(userAnswer, buttonElement) {
+            if (selectedAnswerProcessed) return;
+            selectedAnswerProcessed = true;
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            const isCorrect = (userAnswer === currentQuestion.answer);
+
+            Array.from(optionsContainer.children).forEach(btn => {
+                btn.disabled = true;
+                const btnText = btn.textContent;
+                const correctOptionText = currentQuestion.type === "true_false" ? (currentQuestion.answer ? "Verdadero" : "Falso") : currentQuestion.answer;
+
+                if (btnText === correctOptionText) {
+                    if(!isCorrect) btn.classList.add('actual-correct');
+                }
+            });
+
+            feedbackContainer.classList.remove('hidden', 'correct', 'incorrect');
+
+            if (isCorrect) {
+                score++;
+                buttonElement.classList.add('correct-selection');
+                feedbackTitleElement.textContent = "¡Correcto!";
+                feedbackContainer.classList.add('correct');
+                if (currentQuestion.type === "true_false") {
+                    feedbackTextElement.textContent = currentQuestion.explanation || (currentQuestion.answer ? "La afirmación es correcta." : "La afirmación es efectivamente falsa.");
+                } else {
+                     feedbackTextElement.textContent = currentQuestion.explanation[currentQuestion.answer] || currentQuestion.explanation['correct_explanation'] || "¡Respuesta acertada!";
+                }
+            } else {
+                buttonElement.classList.add('incorrect-selection');
+                feedbackTitleElement.textContent = "Incorrecto";
+                feedbackContainer.classList.add('incorrect');
+                if (currentQuestion.type === "true_false") {
+                    feedbackTextElement.textContent = currentQuestion.explanation;
+                } else if (currentQuestion.type === "multiple_choice") {
+                    const correctAnsText = currentQuestion.answer;
+                    const userChoiceExplanation = currentQuestion.explanation[userAnswer];
+                    const correctChoiceExplanation = currentQuestion.explanation[correctAnsText] || currentQuestion.explanation['correct_explanation'] || "";
+
+                    let explanationText = userChoiceExplanation ? `${userChoiceExplanation} ` : "";
+                    explanationText += `La respuesta correcta era "${correctAnsText}". ${correctChoiceExplanation}`;
+                    feedbackTextElement.textContent = explanationText.trim();
+                }
+            }
+            nextButton.disabled = false;
+            nextButton.focus();
+        }
+
+        function handleNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            progressBar.style.width = '100%';
+
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            scoreTextElement.textContent = `Tu puntuación: ${score} de ${shuffledQuestions.length}`;
+            percentageTextElement.textContent = `Porcentaje de aciertos: ${percentage}%`;
+
+            let message = "";
+            if (percentage === 100) {
+                message = "¡PERFECCIÓN ABSOLUTA! ¡Eres un maestro del clima! Tu conocimiento es asombroso.";
+            } else if (percentage >= 90) {
+                message = "¡EXCEPCIONAL! Tu dominio del tema es impresionante. ¡Casi perfecto!";
+            } else if (percentage >= 75) {
+                message = "¡MUY BIEN! Tienes un conocimiento sólido y detallado sobre el clima.";
+            } else if (percentage >= 60) {
+                message = "¡BUEN TRABAJO! Has comprendido muchos conceptos importantes. Sigue así.";
+            } else if (percentage >= 40) {
+                message = "¡Ánimo! Hay varios temas que puedes repasar para fortalecer tu entendimiento. ¡Cada intento es aprendizaje!";
+            } else {
+                message = "Es un buen momento para revisar el material a fondo. ¡No te desanimes, el conocimiento del clima es fascinante y con práctica lo dominarás!";
+            }
+            finalMessageElement.textContent = message;
+        }
+    </script>
+</body>
+</html>
