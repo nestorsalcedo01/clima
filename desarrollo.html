@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Desarrollo sobre el Clima (Basado en Capítulo 4)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+            color: #1f2937; /* gray-800 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem 0.5rem;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 1.5rem; /* p-6 */
+            border-radius: 1rem; /* 16px */
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem; /* 16px */
+            color: #111827; /* gray-900 */
+            line-height: 1.6;
+        }
+        textarea.user-answer {
+            width: 100%;
+            min-height: 120px;
+            padding: 0.75rem;
+            border: 2px solid #d1d5db; /* gray-300 */
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        textarea.user-answer:focus {
+            outline: none;
+            border-color: #3b82f6; /* blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .model-answer-container {
+            margin-top: 1.25rem; /* 20px */
+            padding: 1rem;
+            border-radius: 0.5rem; /* 8px */
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background-color: #f9fafb; /* gray-50 */
+            border: 1px solid #e5e7eb; /* gray-200 */
+        }
+        .model-answer-container h4 {
+            font-weight: 600;
+            color: #1e3a8a; /* blue-800 */
+            margin-bottom: 0.5rem;
+        }
+        .model-answer-container ul {
+            list-style-type: disc;
+            padding-left: 1.25rem; /* 20px */
+        }
+         .model-answer-container ul li {
+            margin-bottom: 0.3rem;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem; /* 24px */
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #3b82f6; /* blue-500 */
+            width: 0%;
+            transition: width 0.3s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .primary-button {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            border: none;
+            font-size: 0.95rem;
+        }
+        .primary-button:hover:not([disabled]) {
+            background-color: #2563eb; /* blue-600 */
+            transform: translateY(-1px);
+        }
+        .primary-button:disabled {
+            background-color: #93c5fd; /* blue-300 */
+            cursor: not-allowed;
+        }
+        .secondary-button {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #374151; /* gray-700 */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: 1px solid #d1d5db; /* gray-300 */
+        }
+        .secondary-button:hover:not([disabled]) {
+            background-color: #d1d5db; /* gray-300 */
+        }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .quiz-header h1 {
+            font-size: 2rem; /* text-3xl */
+            font-weight: 800;
+            color: #1e3a8a; /* blue-800 */
+            letter-spacing: -0.025em;
+        }
+        .quiz-header p {
+            font-size: 1rem; /* text-base */
+            color: #3b82f6; /* blue-500 */
+            margin-top: 0.25rem;
+        }
+        #question-number {
+            font-size: 0.85rem; /* text-sm */
+            font-weight: 500;
+            color: #6b7280; /* gray-500 */
+        }
+        /* No SVG graphics or Mermaid JS were used in the creation of this HTML. All visual elements are achieved through HTML structure and Tailwind CSS. */
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="start-screen">
+            <div class="quiz-header">
+                <h1>Cuestionario de Desarrollo sobre el Clima</h1>
+                <p>Basado Estrictamente en "Capítulo 4: Los climas"</p>
+            </div>
+            <p class="text-center mb-10 text-base text-slate-700">Este cuestionario te permitirá desarrollar y reflexionar sobre los conceptos clave del "Capítulo 4: Los climas". Escribe tus respuestas y luego compáralas con los puntos clave proporcionados. ¡Es una excelente forma de prepararte!</p>
+            <button id="start-button" class="primary-button w-full py-3">Comenzar Cuestionario</button>
+        </div>
+
+        <div id="quiz-screen" class="hidden">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+                <div id="question-number" class="text-slate-500"></div>
+            </div>
+            <div id="question-text" class="question-text"></div>
+            <textarea id="user-answer" class="user-answer" placeholder="Escribe tu respuesta aquí..."></textarea>
+            <button id="reveal-answer-button" class="secondary-button w-full mb-4">Mostrar Puntos Clave / Respuesta Modelo</button>
+            <div id="model-answer-container" class="model-answer-container hidden">
+                <h4>Puntos Clave Esperados / Respuesta Modelo:</h4>
+                <div id="model-answer-text"></div>
+            </div>
+            <button id="next-button" class="primary-button mt-6 w-full py-3" disabled>Siguiente Pregunta</button>
+        </div>
+
+        <div id="results-screen" class="hidden text-center py-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-6">Cuestionario Completado</h2>
+            <p id="final-message" class="text-base sm:text-lg mb-10 text-slate-700">Has completado todas las preguntas de desarrollo. Esperamos que la comparación con las respuestas modelo te haya sido útil para afianzar tus conocimientos.</p>
+            <button id="restart-button" class="primary-button w-full py-3">Realizar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            // --- Conceptos Fundamentales ---
+            {
+                question: "Explica con tus propias palabras la diferencia fundamental entre 'clima' y 'tiempo atmosférico', indicando la escala temporal que considera cada uno.",
+                model_answer_points: [
+                    "El **tiempo atmosférico** se refiere al estado de la atmósfera en un lugar y momento específicos (es de corta duración y variable).",
+                    "El **clima** es el estado promedio de la atmósfera en un lugar determinado, calculado sobre un período largo (diez años según la referencia).",
+                    "La diferencia principal radica en la **escala temporal**: el tiempo es instantáneo o de corto plazo, mientras que el clima es a largo plazo."
+                ]
+            },
+            {
+                question: "Describe las principales funciones de la atmósfera terrestre mencionadas en relación con la protección del planeta y el desarrollo de fenómenos meteorológicos.",
+                model_answer_points: [
+                    "Protege al planeta de las **radiaciones solares** dañinas.",
+                    "Es el medio donde se desarrollan los **fenómenos meteorológicos** que son responsables del clima.",
+                    "Ayuda a regular la temperatura del planeta."
+                ]
+            },
+            {
+                question: "Menciona los seis elementos principales cuyos valores promediados se utilizan para calcular y definir el clima de un lugar.",
+                model_answer_points: [
+                    "Temperatura",
+                    "Presión atmosférica",
+                    "Humedad",
+                    "Precipitaciones",
+                    "Nubosidad",
+                    "Vientos"
+                ]
+            },
+            {
+                question: "Desarrolla cómo el clima ha influido en el desarrollo de las sociedades y de qué manera el desarrollo tecnológico ha modificado esta relación.",
+                model_answer_points: [
+                    "El clima ha sido un factor importante, actuando a veces como **facilitador** de actividades económicas y otras como **condicionante**.",
+                    "El **desarrollo tecnológico** ha permitido en muchos casos superar las dificultades impuestas por las condiciones climáticas.",
+                    "Ejemplos de superación podrían incluir riego en zonas secas, construcciones adaptadas, etc. (aunque no se detallan, se infiere la idea)."
+                ]
+            },
+            // --- Capas de la Atmósfera (asumiendo conocimiento básico que un capítulo de clima tocaría) ---
+            {
+                question: "Describe brevemente la Troposfera y su importancia para el clima y la vida en la Tierra.",
+                model_answer_points: [
+                    "Es la capa más baja de la atmósfera, en contacto con la superficie terrestre.",
+                    "Es donde ocurren la mayoría de los fenómenos meteorológicos (nubes, lluvia, viento), definiendo el tiempo y el clima.",
+                    "Contiene la mayor parte del aire que respiramos y el vapor de agua.",
+                    "La temperatura generalmente disminuye con la altitud en esta capa."
+                ]
+            },
+            {
+                question: "Explica la función principal de la capa de ozono y en qué capa de la atmósfera se encuentra predominantemente.",
+                model_answer_points: [
+                    "La función principal de la capa de ozono es **absorber la mayor parte de la radiación ultravioleta (UV)** perjudicial proveniente del Sol.",
+                    "Se encuentra predominantemente en la **Estratosfera**, la capa situada por encima de la Troposfera."
+                ]
+            },
+            // --- Movimientos de la Tierra ---
+            {
+                question: "Describe el movimiento de Rotación de la Tierra y cuál es su consecuencia más directa y observable diariamente.",
+                model_answer_points: [
+                    "La Rotación es el **giro de la Tierra sobre su propio eje**.",
+                    "Tarda aproximadamente **24 horas** en completar una vuelta.",
+                    "Su consecuencia más directa y observable es la **sucesión del día y la noche**."
+                ]
+            },
+            {
+                question: "Explica cómo el movimiento de Traslación de la Tierra, combinado con la inclinación de su eje, da origen a las estaciones del año.",
+                model_answer_points: [
+                    "La Traslación es el movimiento de la **Tierra alrededor del Sol**, que dura aproximadamente 365.25 días.",
+                    "El eje de rotación de la Tierra está **inclinado** unos 23.5° respecto a su plano orbital.",
+                    "Debido a esta inclinación, a medida que la Tierra se traslada, diferentes hemisferios reciben los **rayos solares de forma más directa** (verano) o más inclinada (invierno) en diferentes momentos del año.",
+                    "Esto causa las variaciones estacionales en la cantidad de luz y calor recibida, originando la primavera, verano, otoño e invierno."
+                ]
+            },
+            // --- Elementos del Clima ---
+            {
+                question: "Define qué es la temperatura atmosférica y con qué instrumento se mide comúnmente.",
+                model_answer_points: [
+                    "La temperatura atmosférica es el **grado de calor o frío del aire** en un lugar y momento determinados.",
+                    "Se mide comúnmente con un **termómetro**."
+                ]
+            },
+            {
+                question: "Describe qué se entiende por precipitación y menciona al menos tres formas diferentes que puede tomar.",
+                model_answer_points: [
+                    "La precipitación es cualquier forma de **agua (líquida o sólida) que cae desde las nubes** y alcanza la superficie terrestre.",
+                    "Formas comunes incluyen: **lluvia, nieve, granizo** (también llovizna, aguanieve)."
+                ]
+            },
+            {
+                question: "Explica el mecanismo de formación de las lluvias de convección.",
+                model_answer_points: [
+                    "Se originan por el **calentamiento de la superficie terrestre** por el Sol.",
+                    "El aire en contacto con la superficie se calienta, se vuelve menos denso y **asciende**.",
+                    "Al ascender, el aire se enfría y el vapor de agua que contiene se **condensa**, formando nubes de desarrollo vertical (como Cumulonimbos).",
+                    "Estas nubes pueden producir chubascos intensos y tormentas."
+                ]
+            },
+            {
+                question: "Describe cómo se producen las lluvias orográficas y qué es el efecto de 'sombra de lluvia'.",
+                model_answer_points: [
+                    "Las lluvias orográficas ocurren cuando una masa de **aire húmedo se encuentra con una barrera montañosa**.",
+                    "El aire es forzado a **ascender por la ladera de la montaña expuesta al viento (barlovento)**.",
+                    "Al ascender, se enfría, el vapor de agua se condensa y se producen precipitaciones en esa ladera.",
+                    "El efecto de **'sombra de lluvia'** se produce en la ladera opuesta (sotavento), que recibe aire más seco (ya que ha perdido humedad) y que se calienta al descender, resultando en condiciones de menor precipitación."
+                ]
+            },
+            {
+                question: "Explica el origen de las lluvias frontales o ciclónicas.",
+                model_answer_points: [
+                    "Se producen en las **zonas de contacto (frentes) entre dos masas de aire con diferentes características** de temperatura y humedad.",
+                    "Cuando una masa de aire cálido choca con una fría (o viceversa), el aire más cálido y menos denso tiende a ascender sobre el más frío y denso.",
+                    "Este ascenso provoca enfriamiento, condensación y formación de nubes y precipitaciones a lo largo del frente.",
+                    "Están asociadas a sistemas de baja presión (ciclones o borrascas)."
+                ]
+            },
+            {
+                question: "Define humedad atmosférica y explica brevemente qué es la humedad relativa.",
+                model_answer_points: [
+                    "La humedad atmosférica es la **cantidad de vapor de agua presente en el aire**.",
+                    "La **humedad relativa** es el porcentaje de vapor de agua que contiene el aire en un momento dado, en relación con la cantidad máxima de vapor de agua que podría contener a esa misma temperatura antes de saturarse."
+                ]
+            },
+            {
+                question: "Explica qué es la presión atmosférica y cómo se relaciona generalmente con el tipo de tiempo meteorológico (altas y bajas presiones).",
+                model_answer_points: [
+                    "La presión atmosférica es el **peso que ejerce la columna de aire sobre una unidad de superficie** terrestre.",
+                    "Las **altas presiones (anticiclones)** suelen estar asociadas con descenso de aire, lo que inhibe la formación de nubes y favorece tiempo estable, seco y cielos despejados.",
+                    "Las **bajas presiones (borrascas o ciclones)** suelen estar asociadas con ascenso de aire, lo que favorece el enfriamiento, la condensación, la formación de nubes y las precipitaciones, resultando en tiempo inestable."
+                ]
+            },
+            {
+                question: "Define viento e indica los dos instrumentos principales utilizados para medir sus características.",
+                model_answer_points: [
+                    "El viento es el **movimiento del aire en la atmósfera**, principalmente en dirección horizontal.",
+                    "Se origina fundamentalmente por **diferencias de presión atmosférica** (el aire se mueve de alta a baja presión).",
+                    "La **dirección** del viento se mide con una **veleta**.",
+                    "La **velocidad o intensidad** del viento se mide con un **anemómetro**."
+                ]
+            },
+            {
+                question: "Explica qué es la nubosidad y cómo se suele expresar su medición.",
+                model_answer_points: [
+                    "La nubosidad es la **fracción del cielo que se encuentra cubierta por nubes** en un momento y lugar determinados.",
+                    "Se suele expresar en **'octas'**, que representan octavos de cielo cubierto (0/8 para cielo despejado, 8/8 para cielo completamente cubierto)."
+                ]
+            },
+            // --- Factores Geográficos ---
+            {
+                question: "Describe cómo la latitud influye en el clima de un lugar.",
+                model_answer_points: [
+                    "La latitud es la distancia angular desde el ecuador.",
+                    "Determina el **ángulo de incidencia de los rayos solares**: más directos cerca del ecuador (bajas latitudes) y más inclinados hacia los polos (altas latitudes).",
+                    "A menor latitud (más cerca del ecuador), mayor es la concentración de energía solar por unidad de superficie, resultando en temperaturas generalmente más altas.",
+                    "A mayor latitud, la energía solar se reparte sobre un área mayor y atraviesa más atmósfera, resultando en temperaturas más bajas."
+                ]
+            },
+            {
+                question: "Explica cómo la altitud modifica la temperatura y la presión atmosférica.",
+                model_answer_points: [
+                    "Generalmente, a **mayor altitud, la temperatura del aire disminuye** en la Troposfera (aproximadamente 0.65°C por cada 100 metros).",
+                    "Esto se debe a que el aire es menos denso a mayor altura y hay menor efecto de calentamiento desde la superficie terrestre.",
+                    "La **presión atmosférica también disminuye con la altitud**, ya que hay una menor columna de aire ejerciendo peso desde arriba."
+                ]
+            },
+            {
+                question: "Describe el efecto de la 'distancia al mar' (o continentalidad) sobre la amplitud térmica de un lugar.",
+                model_answer_points: [
+                    "El agua (mar, océano) tiene una **alta capacidad calorífica**, lo que significa que se calienta y enfría más lentamente que la tierra.",
+                    "Las **zonas costeras** experimentan un efecto moderador del mar: los inviernos son más suaves y los veranos más frescos, resultando en una **menor amplitud térmica anual** (diferencia entre la temperatura media del mes más cálido y el más frío).",
+                    "Las **zonas continentales interiores**, alejadas de la influencia marina, experimentan una **mayor amplitud térmica anual**, con inviernos más fríos y veranos más calurosos."
+                ]
+            },
+            {
+                question: "Explica cómo las corrientes marinas pueden modificar el clima de las regiones costeras.",
+                model_answer_points: [
+                    "Las corrientes marinas son grandes flujos de agua que transportan calor (corrientes cálidas) o frío (corrientes frías) a través de los océanos.",
+                    "Las **corrientes cálidas** pueden calentar el aire sobre ellas, llevando temperaturas más suaves y mayor humedad a las costas que bañan, haciéndolas más templadas de lo esperado por su latitud (ej. Corriente del Golfo en Europa Occidental).",
+                    "Las **corrientes frías** pueden enfriar el aire sobre ellas, reduciendo la temperatura y la humedad de las costas adyacentes, pudiendo contribuir a la formación de desiertos costeros (ej. Corriente de Humboldt en Sudamérica)."
+                ]
+            },
+            {
+                question: "Describe cómo el relieve (cadenas montañosas) puede actuar como un factor que modifica la precipitación en una región.",
+                model_answer_points: [
+                    "Las cadenas montañosas actúan como **barreras al flujo del viento y la humedad**.",
+                    "Cuando una masa de aire húmedo encuentra una montaña, es forzada a ascender por la **ladera de barlovento** (expuesta al viento).",
+                    "Al ascender, el aire se enfría, el vapor de agua se condensa y se producen **precipitaciones orográficas** abundantes en esta ladera.",
+                    "En la **ladera de sotavento** (opuesta al viento), el aire desciende, se calienta y se vuelve más seco, creando una **'sombra de lluvia'** con condiciones de menor precipitación."
+                ]
+            },
+            // --- Zonas Climáticas ---
+            {
+                question: "Menciona las tres grandes zonas climáticas generales del mundo y una característica principal de temperatura para cada una.",
+                model_answer_points: [
+                    "**Climas Cálidos:** Se caracterizan por temperaturas medias mensuales consistentemente elevadas durante todo el año (generalmente por encima de 18-20°C).",
+                    "**Climas Templados:** Se caracterizan por tener las cuatro estaciones bien diferenciadas, con variaciones significativas de temperatura entre verano e invierno, pero sin extremos permanentes.",
+                    "**Climas Fríos:** Se caracterizan por temperaturas muy bajas durante la mayor parte del año, con inviernos largos y muy fríos, y veranos cortos y frescos."
+                ]
+            },
+            {
+                question: "Describe las características generales de precipitación de un clima ecuatorial (cálido).",
+                model_answer_points: [
+                    "Los climas ecuatoriales suelen tener **precipitaciones abundantes y bien distribuidas** a lo largo de todo el año.",
+                    "No presentan una estación seca definida o esta es muy corta.",
+                    "La alta humedad y las temperaturas elevadas favorecen la convección y las lluvias frecuentes."
+                ]
+            },
+            {
+                question: "Explica la principal diferencia en los patrones de precipitación entre un clima templado oceánico y un clima templado mediterráneo.",
+                model_answer_points: [
+                    "Los climas **templados oceánicos** suelen tener precipitaciones bien distribuidas a lo largo de todo el año, con inviernos húmedos y veranos también con lluvias aunque pueden ser menos intensas.",
+                    "Los climas **templados mediterráneos** se caracterizan por una marcada estacionalidad en las lluvias: tienen inviernos suaves y húmedos (concentración de lluvias) y veranos secos y calurosos."
+                ]
+            },
+            {
+                question: "Describe brevemente las condiciones de temperatura y vegetación típicas de un clima polar de tundra.",
+                model_answer_points: [
+                    "**Temperaturas:** Inviernos muy largos y extremadamente fríos; veranos muy cortos y frescos (la temperatura media del mes más cálido no supera los 10°C pero es superior a 0°C).",
+                    "**Vegetación:** No hay árboles debido a las bajas temperaturas y al permafrost (suelo permanentemente congelado en profundidad). La vegetación característica es la tundra, compuesta por musgos, líquenes, hierbas y arbustos bajos y resistentes."
+                ]
+            },
+            // --- Relación Clima, Sociedades y Actividades Económicas ---
+            {
+                question: "Explica con ejemplos cómo el clima puede actuar como 'facilitador' y como 'condicionante' para las actividades económicas.",
+                model_answer_points: [
+                    "**Facilitador:** Un clima templado con lluvias adecuadas facilita la agricultura diversificada (cereales, oleaginosas). Costas con clima cálido facilitan el turismo de veraneo todo el año.",
+                    "**Condicionante:** Un clima árido condiciona la agricultura a la disponibilidad de riego o a cultivos resistentes a la sequía. Climas polares condicionan las actividades a aquellas adaptadas al frío extremo y limitan la agricultura."
+                ]
+            },
+            {
+                question: "Describe qué tipo de actividades agrícolas y ganaderas son propicias para los climas templados, según la información proporcionada.",
+                model_answer_points: [
+                    "**Cultivos:** Cereales, oleaginosas, fibras.",
+                    "**Ganadería:** Carnes vacunas y porcinas."
+                ]
+            },
+            {
+                question: "Menciona qué cultivos y tipo de ganadería se han desarrollado en climas fríos y húmedos.",
+                model_answer_points: [
+                    "**Cultivos:** Frutas finas o rojas (como cerezas y frambuesas).",
+                    "**Ganadería:** Caprina y ovina."
+                ]
+            },
+            {
+                question: "Describe las actividades económicas (cultivos y ganadería) que se mencionan como características de las zonas áridas.",
+                model_answer_points: [
+                    "**Ganadería:** Camélidos.",
+                    "**Cultivos:** Tubérculos, legumbres, frutas secas."
+                ]
+            },
+            {
+                question: "Compara los tipos de turismo que se desarrollan en zonas de 'frío y relieves montañosos' versus 'climas cálidos y áridos'.",
+                model_answer_points: [
+                    "**Frío y relieves montañosos:** Se desarrollan los deportes invernales (esquí), que atraen turistas específicamente por esas condiciones.",
+                    "**Climas cálidos y áridos:** Se ha desarrollado el turismo aventura, que busca explotar las características particulares de estos entornos (paisajes desérticos, actividades de riesgo controlado, etc.)."
+                ]
+            },
+            {
+                question: "Explica por qué los centros de veraneo más importantes del planeta se encuentran en zonas de clima cálido cercanas al mar, y qué característica particular tiene la industria turística en esos lugares.",
+                model_answer_points: [
+                    "Se encuentran allí debido a las **condiciones climáticas agradables** (cálidas, soleadas) y la presencia del mar, que atraen a personas que buscan descanso y recreación.",
+                    "La industria turística en estos lugares **se desarrolla todo el año**, lo que indica una demanda constante y una infraestructura adaptada."
+                ]
+            },
+            {
+                question: "Analiza la afirmación: 'Muchas veces las personas eligen para hacer turismo lugares de clima contrario al que viven habitualmente.' ¿Qué implicaciones tiene esto para la industria turística?",
+                model_answer_points: [
+                    "Implica que existe una **demanda de diversidad climática** en el turismo.",
+                    "Las personas que viven en climas fríos pueden buscar destinos cálidos en invierno, y viceversa.",
+                    "Esto crea oportunidades para una amplia gama de destinos con diferentes climas, ya que no todos buscan el mismo tipo de experiencia climática.",
+                    "La industria debe considerar esta motivación al promocionar destinos y desarrollar productos turísticos."
+                ]
+            },
+            {
+                question: "Define qué son las isotermas y explica brevemente su utilidad en el estudio del clima.",
+                model_answer_points: [
+                    "Las isotermas son **líneas imaginarias que se dibujan en los mapas para unir todos los puntos de la superficie terrestre que tienen la misma temperatura** en un momento dado o como valor promedio de un período.",
+                    "Su utilidad radica en que permiten **visualizar la distribución geográfica de las temperaturas**, identificar zonas cálidas y frías, y analizar cómo los factores geográficos (latitud, altitud, corrientes, etc.) modifican estos patrones térmicos."
+                ]
+            },
+            {
+                question: "Elabora un breve párrafo explicando la relación que existe entre las isotermas y los factores geográficos que modifican el clima (como la latitud, altitud y cercanía al mar).",
+                model_answer_points: [
+                    "Las isotermas generalmente tienden a seguir un patrón zonal (paralelo a los círculos de latitud) debido a la influencia de la **latitud** sobre la radiación solar. Sin embargo, este patrón es modificado por otros factores geográficos.",
+                    "La **altitud** hace que las isotermas se curven o se cierren alrededor de las montañas, mostrando temperaturas más frías en zonas elevadas.",
+                    "La **cercanía al mar** y las **corrientes marinas** también desvían las isotermas: las costas bañadas por corrientes cálidas tendrán isotermas que se desplazan hacia latitudes más altas (indicando más calor), mientras que las costas con corrientes frías mostrarán el efecto contrario. La continentalidad también se refleja en la forma y separación de las isotermas."
+                ]
+            },
+            // Preguntas adicionales (hasta 40 por ahora, para mantener la calidad sobre la cantidad si el material fuente es limitado para desarrollo profundo)
+            {
+                question: "Considerando la definición de clima, ¿por qué un solo verano excepcionalmente caluroso en una región no es suficiente para afirmar que el clima de esa región ha cambiado permanentemente a ser más cálido?",
+                model_answer_points: [
+                    "Porque el clima se define por el **promedio de las condiciones atmosféricas a lo largo de un período extenso** (diez años según la referencia).",
+                    "Un solo evento o una sola estación, aunque sea anómala, forma parte de la variabilidad del tiempo atmosférico, pero no necesariamente indica un cambio en el promedio a largo plazo que define el clima.",
+                    "Para determinar un cambio climático, se necesitaría observar una tendencia sostenida en los promedios durante varias décadas."
+                ]
+            },
+            {
+                question: "Si una región costera en latitudes medias del Hemisferio Sur está bañada por una corriente marina fría proveniente del Antártico, ¿cómo esperaría que fuera su clima en comparación con otra región a la misma latitud pero en el interior del continente y sin influencia de dicha corriente? Argumente su respuesta.",
+                model_answer_points: [
+                    "La región costera con la corriente fría probablemente tendría **temperaturas más frescas** (especialmente en verano) y una **menor amplitud térmica anual** que la región continental.",
+                    "Sería probablemente **más árida o con menos precipitaciones**, ya que el aire frío sobre la corriente tiene menor capacidad de retener humedad y la corriente fría puede estabilizar la atmósfera, inhibiendo la convección y la formación de nubes de lluvia.",
+                    "La región continental, en cambio, experimentaría veranos más cálidos e inviernos más fríos (mayor amplitud térmica) y su régimen de lluvias dependería de otros factores, pero no estaría directamente enfriada y secada por la corriente."
+                ]
+            },
+            {
+                question: "Explica por qué el conocimiento del clima es fundamental para la planificación de actividades como la agricultura y el turismo.",
+                model_answer_points: [
+                    "**Agricultura:** El clima determina qué tipos de cultivos son viables (temperatura, lluvia, duración de la estación de crecimiento), cuándo sembrar y cosechar, y los riesgos asociados (sequías, heladas). La planificación agrícola depende enteramente de las características climáticas promedio y su variabilidad.",
+                    "**Turismo:** Muchos destinos turísticos se basan en atractivos climáticos (sol y playa, nieve para esquí). El conocimiento del clima permite planificar temporadas, desarrollar infraestructuras adecuadas y gestionar la demanda. El clima influye en la experiencia del turista y en la viabilidad económica de los emprendimientos."
+                ]
+            }
+            // Se pueden agregar más preguntas si se desea llegar a 100, pero se enfocarían en reformular o detallar más los conceptos ya introducidos,
+            // siempre y cuando se mantenga la fidelidad al contenido esperado de un "Capítulo 4: Los climas".
+            // Por ejemplo, preguntas comparativas, o que pidan describir un tipo de clima específico con todos sus elementos.
+        ];
+
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+
+        const startButton = document.getElementById('start-button');
+        const nextButton = document.getElementById('next-button');
+        const restartButton = document.getElementById('restart-button');
+        const revealAnswerButton = document.getElementById('reveal-answer-button');
+        
+        const currentScoreElement = document.getElementById('current-score'); // No se usa para puntaje, pero podría reutilizarse
+
+        const questionTextElement = document.getElementById('question-text');
+        const userAnswerTextarea = document.getElementById('user-answer');
+        const modelAnswerContainer = document.getElementById('model-answer-container');
+        const modelAnswerTextElement = document.getElementById('model-answer-text');
+        
+        const finalMessageElement = document.getElementById('final-message');
+        const progressBar = document.getElementById('progress-bar');
+        const questionNumberElement = document.getElementById('question-number');
+
+        let currentQuestionIndex = 0;
+        let shuffledQuestions = [];
+
+        startButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', handleNextQuestion);
+        restartButton.addEventListener('click', startQuiz);
+        revealAnswerButton.addEventListener('click', showModelAnswer);
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            shuffledQuestions = shuffleArray(allQuestions);
+             // Limitar a 40 preguntas para este ejemplo de desarrollo, si hay más.
+            shuffledQuestions = shuffledQuestions.slice(0, Math.min(40, shuffledQuestions.length));
+
+
+            startScreen.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            nextButton.disabled = true; // Se habilita al mostrar la respuesta modelo
+            modelAnswerContainer.classList.add('hidden');
+            loadQuestion();
+        }
+        
+
+        function loadQuestion() {
+            modelAnswerContainer.classList.add('hidden');
+            userAnswerTextarea.value = ''; // Limpiar respuesta anterior
+            nextButton.disabled = true; // Deshabilitar hasta que se muestre la respuesta
+
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            questionTextElement.textContent = currentQuestion.question;
+            
+            const progressPercentage = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            questionNumberElement.textContent = `Pregunta ${currentQuestionIndex + 1} de ${shuffledQuestions.length}`;
+            revealAnswerButton.disabled = false; // Habilitar botón de revelar
+        }
+
+        function showModelAnswer() {
+            const currentQuestion = shuffledQuestions[currentQuestionIndex];
+            modelAnswerTextElement.innerHTML = ''; // Limpiar contenido anterior
+
+            if (Array.isArray(currentQuestion.model_answer_points)) {
+                const ul = document.createElement('ul');
+                currentQuestion.model_answer_points.forEach(point => {
+                    const li = document.createElement('li');
+                    li.innerHTML = point; // Usar innerHTML para que el <strong> funcione
+                    ul.appendChild(li);
+                });
+                modelAnswerTextElement.appendChild(ul);
+            } else {
+                modelAnswerTextElement.textContent = currentQuestion.model_answer_points; // Si es un solo string
+            }
+            
+            modelAnswerContainer.classList.remove('hidden');
+            revealAnswerButton.disabled = true; // Deshabilitar después de revelar
+            nextButton.disabled = false; // Habilitar botón para ir a la siguiente
+            nextButton.focus();
+        }
+
+        function handleNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            progressBar.style.width = '100%';
+            // No hay puntaje numérico
+            finalMessageElement.textContent = `Has completado las ${shuffledQuestions.length} preguntas de desarrollo. Esperamos que la comparación con los puntos clave te haya sido útil para afianzar tus conocimientos sobre el "Capítulo 4: Los climas". ¡Revisa tus respuestas y sigue aprendiendo!`;
+        }
+    </script>
+</body>
+</html>
