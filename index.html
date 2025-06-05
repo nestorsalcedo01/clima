@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal</title>
+    <style>
+        /* Estilos generales del cuerpo */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Estilo del encabezado */
+        header {
+            background-color: #005f73;
+            color: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* Sección de Héroe (bienvenida) */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #e9ecef;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .hero h2 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: #003440;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        /* Cuadrícula para las tarjetas de navegación */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px 0;
+        }
+
+        /* Estilo de las tarjetas */
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card h3 {
+            font-size: 1.6em;
+            margin-top: 0;
+            color: #005f73;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        /* Estilo del enlace dentro de la tarjeta */
+        .card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        /* Estilo del pie de página */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #003440;
+            color: #ffffff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mi Página Web Principal 🚀</h1>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Bienvenido a Mi Espacio Digital</h2>
+            <p>Explora las diferentes secciones para descubrir más.</p>
+        </section>
+
+        <div class="grid-container">
+            <div class="card">
+                <a href="clima.html">
+                    <div class="card-content">
+                        <h3>📄 Clima</h3>
+                        <p>Descubre quién soy, mi historia y mis pasiones.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="portafolio.html">
+                    <div class="card-content">
+                        <h3>🖼️ Portafolio</h3>
+                        <p>Una colección de mis mejores trabajos y proyectos.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="blog.html">
+                    <div class="card-content">
+                        <h3>✍️ Blog</h3>
+                        <p>Lee mis pensamientos, artículos y tutoriales.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="servicios.html">
+                    <div class="card-content">
+                        <h3>🛠️ Servicios</h3>
+                        <p>Conoce los servicios profesionales que ofrezco.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="galeria.html">
+                    <div class="card-content">
+                        <h3>📷 Galería</h3>
+                        <p>Una selección de mis fotografías y diseños visuales.</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card">
+                <a href="contacto.html">
+                    <div class="card-content">
+                        <h3>✉️ Contacto</h3>
+                        <p>¿Interesado en colaborar? Ponte en contacto conmigo.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Mi Página Web. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
